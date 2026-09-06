@@ -1,0 +1,62 @@
+name: Record pick
+
+on:
+  workflow_dispatch:
+    inputs:
+      team:
+        description: Canonical name, alias, or abbr. Empty = lock live dashboard primary.
+        required: false
+        default: ""
+        type: string
+      week:
+        description: NFL week. Empty = week from live recommendations.json.
+        required: false
+        default: ""
+        type: string
+      loss:
+        description: Decrement lives_remaining by 1 (min 0) after resolving the pick.
+        required: false
+        default: false
+        type: boolean
+      replace:
+        description: Allow overwriting a different committed team for this week.
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: record-pick
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Apply pick to state.yaml
+        env:
+          INPUT_TEAM: ${{ inputs.team }}
+          INPUT_WEEK: ${{ inputs.week }}
+          INPUT_LOSS: ${{ inputs.loss }}
+          INPUT_REPLACE: ${{ inputs.replace }}
+        run: python -m src.survivor.record_pick | tee /tmp/record_msg.txt
+      - name: Commit config/state.yaml
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add config/state.yaml
+          if git diff --staged --quiet; then
+            echo "no-op"
+            exit 0
+          fi
+          MSG=$(tail -n 1 /tmp/record_msg.txt)
+          git commit -m "$MSG"
+          git push

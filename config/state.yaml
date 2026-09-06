@@ -1,0 +1,9 @@
+season: 2026
+lives_remaining: 2
+used_teams: []
+committed: {}
+notes: ""
+pool:
+  name: "NFL Survivor"
+  tie_rule: loss
+  last_week: 18

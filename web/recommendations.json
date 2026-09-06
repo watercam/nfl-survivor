@@ -1,0 +1,250 @@
+{
+  "week": 1,
+  "season": 2026,
+  "lives_remaining": 2,
+  "status": "active",
+  "calibration": "none",
+  "generated_at": "2026-09-08T16:00:00Z",
+  "used_teams": [],
+  "committed_this_week": null,
+  "primary": {
+    "team": "Buffalo Bills",
+    "opponent": "Arizona Cardinals",
+    "is_home": false,
+    "kickoff": "2026-09-13T17:00:00Z",
+    "p_current": 0.7802197802197802,
+    "spread_move": 0.0,
+    "adj": 0.0,
+    "p_final": 0.7802197802197802,
+    "survive_p": 0.006378407061920581,
+    "source": "market",
+    "flags": [
+      "REFERENCE_MISSING"
+    ],
+    "game_id": "w1-buf",
+    "locked": false
+  },
+  "greedy_this_week": {
+    "team": "Kansas City Chiefs",
+    "p_final": 0.9
+  },
+  "alternatives": [
+    {
+      "team": "Buffalo Bills",
+      "opponent": "Arizona Cardinals",
+      "is_home": false,
+      "kickoff": "2026-09-13T17:00:00Z",
+      "p_current": 0.7802197802197802,
+      "spread_move": 0.0,
+      "adj": 0.0,
+      "p_final": 0.7802197802197802,
+      "survive_p": 0.006378407061920581,
+      "source": "market",
+      "flags": [
+        "REFERENCE_MISSING"
+      ],
+      "game_id": "w1-buf",
+      "locked": false
+    },
+    {
+      "team": "Kansas City Chiefs",
+      "opponent": "Cincinnati Bengals",
+      "is_home": false,
+      "kickoff": "2026-09-13T17:00:00Z",
+      "p_current": 0.9,
+      "spread_move": 0.0,
+      "adj": 0.0,
+      "p_final": 0.9,
+      "survive_p": 0.004934502718313965,
+      "source": "market",
+      "flags": [
+        "REFERENCE_MISSING"
+      ],
+      "game_id": "w1-kc",
+      "locked": false
+    },
+    {
+      "team": "Arizona Cardinals",
+      "opponent": "Buffalo Bills",
+      "is_home": true,
+      "kickoff": "2026-09-13T17:00:00Z",
+      "p_current": 0.21978021978021978,
+      "spread_move": 0.0,
+      "adj": 0.0,
+      "p_final": 0.21978021978021978,
+      "survive_p": 0.0023401326557691716,
+      "source": "market",
+      "flags": [
+        "REFERENCE_MISSING"
+      ],
+      "game_id": "w1-buf",
+      "locked": false
+    },
+    {
+      "team": "Cincinnati Bengals",
+      "opponent": "Kansas City Chiefs",
+      "is_home": true,
+      "kickoff": "2026-09-13T17:00:00Z",
+      "p_current": 0.1,
+      "spread_move": 0.0,
+      "adj": 0.0,
+      "p_final": 0.1,
+      "survive_p": 0.0014770504787681843,
+      "source": "market",
+      "flags": [
+        "REFERENCE_MISSING"
+      ],
+      "game_id": "w1-kc",
+      "locked": false
+    }
+  ],
+  "projected_path": [
+    {
+      "week": 1,
+      "team": "Buffalo Bills",
+      "p_win": 0.7802197802197802,
+      "source": "market",
+      "opponent": "Arizona Cardinals"
+    },
+    {
+      "week": 2,
+      "team": "Atlanta Falcons",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Baltimore Ravens"
+    },
+    {
+      "week": 3,
+      "team": "Carolina Panthers",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Chicago Bears"
+    },
+    {
+      "week": 4,
+      "team": "Cleveland Browns",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Dallas Cowboys"
+    },
+    {
+      "week": 5,
+      "team": "Detroit Lions",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Green Bay Packers"
+    },
+    {
+      "week": 6,
+      "team": "Houston Texans",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Indianapolis Colts"
+    },
+    {
+      "week": 7,
+      "team": "Jacksonville Jaguars",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Las Vegas Raiders"
+    },
+    {
+      "week": 8,
+      "team": "Los Angeles Chargers",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Los Angeles Rams"
+    },
+    {
+      "week": 9,
+      "team": "Miami Dolphins",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Minnesota Vikings"
+    },
+    {
+      "week": 10,
+      "team": "New England Patriots",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "New Orleans Saints"
+    },
+    {
+      "week": 11,
+      "team": "New York Giants",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "New York Jets"
+    },
+    {
+      "week": 12,
+      "team": "Philadelphia Eagles",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Pittsburgh Steelers"
+    },
+    {
+      "week": 13,
+      "team": "San Francisco 49ers",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Seattle Seahawks"
+    },
+    {
+      "week": 14,
+      "team": "Tampa Bay Buccaneers",
+      "p_win": 0.58,
+      "source": "prior",
+      "opponent": "Tennessee Titans"
+    },
+    {
+      "week": 15,
+      "team": "Kansas City Chiefs",
+      "p_win": 0.9,
+      "source": "market",
+      "opponent": "Denver Broncos"
+    }
+  ],
+  "slate": [
+    {
+      "game_id": "w1-buf",
+      "team": "Buffalo Bills",
+      "opponent": "Arizona Cardinals",
+      "p_final": 0.7802197802197802,
+      "survive_p": 0.006378407061920581,
+      "kickoff": "2026-09-13T17:00:00Z"
+    },
+    {
+      "game_id": "w1-kc",
+      "team": "Kansas City Chiefs",
+      "opponent": "Cincinnati Bengals",
+      "p_final": 0.9,
+      "survive_p": 0.004934502718313965,
+      "kickoff": "2026-09-13T17:00:00Z"
+    },
+    {
+      "game_id": "w1-buf",
+      "team": "Arizona Cardinals",
+      "opponent": "Buffalo Bills",
+      "p_final": 0.21978021978021978,
+      "survive_p": 0.0023401326557691716,
+      "kickoff": "2026-09-13T17:00:00Z"
+    },
+    {
+      "game_id": "w1-kc",
+      "team": "Cincinnati Bengals",
+      "opponent": "Kansas City Chiefs",
+      "p_final": 0.1,
+      "survive_p": 0.0014770504787681843,
+      "kickoff": "2026-09-13T17:00:00Z"
+    }
+  ],
+  "alerts": [
+    {
+      "kind": "new_week_slate",
+      "detail": "new week or no prior snapshot"
+    }
+  ],
+  "notes": null,
+  "record_pick_url": null
+}

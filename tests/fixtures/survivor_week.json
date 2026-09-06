@@ -1,0 +1,223 @@
+{
+  "now": "2026-09-08T16:00:00Z",
+  "week": 1,
+  "last_week": 15,
+  "games": [
+    {
+      "game_id": "w1-kc",
+      "week": 1,
+      "home": "Cincinnati Bengals",
+      "away": "Kansas City Chiefs",
+      "kickoff": "2026-09-13T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w1-buf",
+      "week": 1,
+      "home": "Arizona Cardinals",
+      "away": "Buffalo Bills",
+      "kickoff": "2026-09-13T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w1-started",
+      "week": 1,
+      "home": "Seattle Seahawks",
+      "away": "San Francisco 49ers",
+      "kickoff": "2026-09-08T00:20:00Z",
+      "status": "in"
+    },
+    {
+      "game_id": "w2",
+      "week": 2,
+      "home": "Atlanta Falcons",
+      "away": "Baltimore Ravens",
+      "kickoff": "2026-09-20T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w3",
+      "week": 3,
+      "home": "Carolina Panthers",
+      "away": "Chicago Bears",
+      "kickoff": "2026-09-27T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w4",
+      "week": 4,
+      "home": "Cleveland Browns",
+      "away": "Dallas Cowboys",
+      "kickoff": "2026-10-04T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w5",
+      "week": 5,
+      "home": "Detroit Lions",
+      "away": "Green Bay Packers",
+      "kickoff": "2026-10-11T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w6",
+      "week": 6,
+      "home": "Houston Texans",
+      "away": "Indianapolis Colts",
+      "kickoff": "2026-10-18T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w7",
+      "week": 7,
+      "home": "Jacksonville Jaguars",
+      "away": "Las Vegas Raiders",
+      "kickoff": "2026-10-25T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w8",
+      "week": 8,
+      "home": "Los Angeles Chargers",
+      "away": "Los Angeles Rams",
+      "kickoff": "2026-11-01T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w9",
+      "week": 9,
+      "home": "Miami Dolphins",
+      "away": "Minnesota Vikings",
+      "kickoff": "2026-11-08T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w10",
+      "week": 10,
+      "home": "New England Patriots",
+      "away": "New Orleans Saints",
+      "kickoff": "2026-11-15T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w11",
+      "week": 11,
+      "home": "New York Giants",
+      "away": "New York Jets",
+      "kickoff": "2026-11-22T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w12",
+      "week": 12,
+      "home": "Philadelphia Eagles",
+      "away": "Pittsburgh Steelers",
+      "kickoff": "2026-11-29T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w13",
+      "week": 13,
+      "home": "San Francisco 49ers",
+      "away": "Seattle Seahawks",
+      "kickoff": "2026-12-06T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w14",
+      "week": 14,
+      "home": "Tampa Bay Buccaneers",
+      "away": "Tennessee Titans",
+      "kickoff": "2026-12-13T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w15-kc",
+      "week": 15,
+      "home": "Denver Broncos",
+      "away": "Kansas City Chiefs",
+      "kickoff": "2026-12-20T17:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "game_id": "w15-was",
+      "week": 15,
+      "home": "Washington Commanders",
+      "away": "Arizona Cardinals",
+      "kickoff": "2026-12-20T17:00:00Z",
+      "status": "scheduled"
+    }
+  ],
+  "snapshots": [
+    {
+      "game_id": "w1-kc",
+      "home": "Cincinnati Bengals",
+      "away": "Kansas City Chiefs",
+      "snapshot_ts": "2026-09-08T16:00:00Z",
+      "h2h": {
+        "Kansas City Chiefs": -900,
+        "Cincinnati Bengals": 900
+      },
+      "spreads": {
+        "Kansas City Chiefs": -14.0,
+        "Cincinnati Bengals": 14.0
+      }
+    },
+    {
+      "game_id": "w1-kc",
+      "home": "Cincinnati Bengals",
+      "away": "Kansas City Chiefs",
+      "snapshot_ts": "2026-09-10T17:00:00Z",
+      "h2h": {
+        "Kansas City Chiefs": -850,
+        "Cincinnati Bengals": 850
+      },
+      "spreads": {
+        "Kansas City Chiefs": -13.5,
+        "Cincinnati Bengals": 13.5
+      }
+    },
+    {
+      "game_id": "w1-buf",
+      "home": "Arizona Cardinals",
+      "away": "Buffalo Bills",
+      "snapshot_ts": "2026-09-08T16:00:00Z",
+      "h2h": {
+        "Buffalo Bills": -355,
+        "Arizona Cardinals": 355
+      },
+      "spreads": {
+        "Buffalo Bills": -6.5,
+        "Arizona Cardinals": 6.5
+      }
+    },
+    {
+      "game_id": "w15-kc",
+      "home": "Denver Broncos",
+      "away": "Kansas City Chiefs",
+      "snapshot_ts": "2026-09-08T16:00:00Z",
+      "h2h": {
+        "Kansas City Chiefs": -900,
+        "Denver Broncos": 900
+      },
+      "spreads": {
+        "Kansas City Chiefs": -14.0,
+        "Denver Broncos": 14.0
+      }
+    },
+    {
+      "game_id": "w15-was",
+      "home": "Washington Commanders",
+      "away": "Arizona Cardinals",
+      "snapshot_ts": "2026-09-08T16:00:00Z",
+      "h2h": {
+        "Washington Commanders": -150,
+        "Arizona Cardinals": 130
+      },
+      "spreads": {
+        "Washington Commanders": -3.0,
+        "Arizona Cardinals": 3.0
+      }
+    }
+  ]
+}

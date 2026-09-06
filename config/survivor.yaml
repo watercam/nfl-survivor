@@ -1,0 +1,26 @@
+horizons:
+  reference_hours: 72
+odds_api:
+  sport: americanfootball_nfl
+  markets: [h2h, spreads]
+  regions: [eu]
+  preferred_bookmaker: pinnacle
+  allow_book_fallback: false
+  odds_format: american
+  snapshot_grid_minutes: 5
+calibration:
+  source: none
+  clamp_min: 0.01
+  clamp_max: 0.99
+  max_adjustment: 0.03
+  matrix_csv: ""
+slate:
+  espn_scoreboard_url: https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
+  dashboard_url: https://nfl-survivor.netlify.app
+  last_week: 18
+  home_prior: 0.58
+ops:
+  github_repo: watercam/nfl-survivor
+  record_pick_workflow: record-pick.yml
+slack:
+  heartbeat: always

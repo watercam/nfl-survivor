@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NFL Survivor</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a222c;
+      --text: #f4f7fb;
+      --muted: #9aa8b5;
+      --accent: #3dd68c;
+      --warn: #f5c542;
+      --chip: #243140;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+    }
+    main { max-width: 42rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+    h1 { font-size: 1.1rem; font-weight: 650; margin: 0 0 0.75rem; color: var(--muted); }
+    .lives { font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+    .chip { background: var(--chip); border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.8rem; }
+    .pick {
+      background: var(--card);
+      border-radius: 1rem;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .pick .label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .pick h2 { font-size: 1.85rem; margin: 0.2rem 0 0.35rem; }
+    .meta { color: var(--muted); font-size: 0.95rem; }
+    .nums { display: flex; gap: 1.25rem; margin-top: 0.8rem; }
+    .nums strong { display: block; font-size: 1.25rem; color: var(--accent); }
+    .why { margin-top: 0.8rem; color: var(--warn); font-size: 0.95rem; }
+    .cta {
+      display: block;
+      margin-top: 1rem;
+      background: var(--accent);
+      color: #062214;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0.85rem;
+      border-radius: 0.75rem;
+    }
+    h3 { margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--muted); }
+    ol, ul { padding-left: 1.2rem; margin: 0; }
+    li { margin: 0.35rem 0; }
+    .stamp { margin-top: 1.5rem; color: var(--muted); font-size: 0.8rem; }
+    .error { color: #ff8d8d; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>NFL Survivor</h1>
+    <div id="app">Loading…</div>
+  </main>
+  <script>
+    function pct(v) {
+      if (v == null) return "—";
+      return Number(v).toFixed(2);
+    }
+    fetch("./recommendations.json", { cache: "no-store" })
+      .then((r) => {
+        if (!r.ok) throw new Error("missing recommendations.json");
+        return r.json();
+      })
+      .then((d) => {
+        const usedList = d.used_teams || [];
+        const used = usedList.length
+          ? usedList.map((t) => `<span class="chip">${t}</span>`).join("")
+          : "<span class='chip'>no teams used</span>";
+        const p = d.primary;
+        const greedy = d.greedy_this_week;
+        let why = "";
+        if (p && greedy && greedy.team && greedy.team !== p.team) {
+          why = `<div class="why">Saved ${greedy.team} for later (this-week p_final ${pct(greedy.p_final)}).</div>`;
+        }
+        let locked = "";
+        if (d.committed_this_week) locked = `<div class="meta">Locked pick: ${d.committed_this_week}</div>`;
+        let pickBlock = `<div class="pick"><div class="label">No recommend</div><h2>${d.status}</h2></div>`;
+        if (p && d.status !== "eliminated") {
+          pickBlock = `
+            <div class="pick">
+              <div class="label">This week’s pick${p.locked ? " · locked" : ""}</div>
+              <h2>${p.team}</h2>
+              <div class="meta">vs ${p.opponent}${p.is_home ? " (home)" : " (away)"}</div>
+              <div class="meta">Kickoff ${p.kickoff}</div>
+              ${locked}
+              <div class="nums">
+                <div><span>p_final</span><strong>${pct(p.p_final)}</strong></div>
+                <div><span>survive_p</span><strong>${pct(p.survive_p)}</strong></div>
+              </div>
+              ${why}
+              ${d.record_pick_url ? `<a class="cta" href="${d.record_pick_url}">Record pick</a>` : ""}
+            </div>`;
+        }
+        const alts = (d.alternatives || []).map((a) =>
+          `<li>${a.team} · survive ${pct(a.survive_p)} · week ${pct(a.p_final)}</li>`
+        ).join("");
+        const path = (d.projected_path || []).map((s) =>
+          `<li>W${s.week} ${s.team || "(starve)"} · ${pct(s.p_win)} · ${s.source}</li>`
+        ).join("");
+        document.getElementById("app").innerHTML = `
+          <div class="lives">Week ${d.week} · lives ${d.lives_remaining} · ${d.status}</div>
+          <div class="chips">${used}</div>
+          ${pickBlock}
+          <h3>Alternatives</h3>
+          <ol>${alts || "<li>None</li>"}</ol>
+          <h3>Projected path</h3>
+          <ol>${path || "<li>None</li>"}</ol>
+          <div class="stamp">generated_at ${d.generated_at || ""}</div>
+        `;
+      })
+      .catch((err) => {
+        document.getElementById("app").innerHTML = `<p class="error">${err.message}</p>`;
+      });
+  </script>
+</body>
+</html>

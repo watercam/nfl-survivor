@@ -1,0 +1,51 @@
+name: Survivor refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 23 * * 2"
+    - cron: "0 16 * * 3"
+    - cron: "0 11,16 * * 4"
+    - cron: "0 16 * * 6"
+    - cron: "0 12,16 * * 0"
+
+concurrency:
+  group: survivor-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Require Odds and Netlify secrets
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          test -n "$ODDS_API_KEY"
+          test -n "$NETLIFY_AUTH_TOKEN"
+          test -n "$NETLIFY_SITE_ID"
+      - name: Rank and write dashboard JSON
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python -m src.survivor.run --web
+      - name: Deploy Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli deploy --dir=web --prod
+      - name: Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python -m src.survivor.slack --failure "NFL Survivor refresh failed: {RUN_URL}"

@@ -1,0 +1,128 @@
+- canonical: Arizona Cardinals
+  espn_team: Arizona Cardinals
+  odds_team: Arizona Cardinals
+  abbr: ARI
+- canonical: Atlanta Falcons
+  espn_team: Atlanta Falcons
+  odds_team: Atlanta Falcons
+  abbr: ATL
+- canonical: Baltimore Ravens
+  espn_team: Baltimore Ravens
+  odds_team: Baltimore Ravens
+  abbr: BAL
+- canonical: Buffalo Bills
+  espn_team: Buffalo Bills
+  odds_team: Buffalo Bills
+  abbr: BUF
+- canonical: Carolina Panthers
+  espn_team: Carolina Panthers
+  odds_team: Carolina Panthers
+  abbr: CAR
+- canonical: Chicago Bears
+  espn_team: Chicago Bears
+  odds_team: Chicago Bears
+  abbr: CHI
+- canonical: Cincinnati Bengals
+  espn_team: Cincinnati Bengals
+  odds_team: Cincinnati Bengals
+  abbr: CIN
+- canonical: Cleveland Browns
+  espn_team: Cleveland Browns
+  odds_team: Cleveland Browns
+  abbr: CLE
+- canonical: Dallas Cowboys
+  espn_team: Dallas Cowboys
+  odds_team: Dallas Cowboys
+  abbr: DAL
+- canonical: Denver Broncos
+  espn_team: Denver Broncos
+  odds_team: Denver Broncos
+  abbr: DEN
+- canonical: Detroit Lions
+  espn_team: Detroit Lions
+  odds_team: Detroit Lions
+  abbr: DET
+- canonical: Green Bay Packers
+  espn_team: Green Bay Packers
+  odds_team: Green Bay Packers
+  abbr: GB
+- canonical: Houston Texans
+  espn_team: Houston Texans
+  odds_team: Houston Texans
+  abbr: HOU
+- canonical: Indianapolis Colts
+  espn_team: Indianapolis Colts
+  odds_team: Indianapolis Colts
+  abbr: IND
+- canonical: Jacksonville Jaguars
+  espn_team: Jacksonville Jaguars
+  odds_team: Jacksonville Jaguars
+  abbr: JAX
+- canonical: Kansas City Chiefs
+  espn_team: Kansas City Chiefs
+  odds_team: Kansas City Chiefs
+  abbr: KC
+- canonical: Las Vegas Raiders
+  espn_team: Las Vegas Raiders
+  odds_team: Las Vegas Raiders
+  abbr: LV
+- canonical: Los Angeles Chargers
+  espn_team: Los Angeles Chargers
+  odds_team: Los Angeles Chargers
+  abbr: LAC
+- canonical: Los Angeles Rams
+  espn_team: Los Angeles Rams
+  odds_team: Los Angeles Rams
+  abbr: LAR
+- canonical: Miami Dolphins
+  espn_team: Miami Dolphins
+  odds_team: Miami Dolphins
+  abbr: MIA
+- canonical: Minnesota Vikings
+  espn_team: Minnesota Vikings
+  odds_team: Minnesota Vikings
+  abbr: MIN
+- canonical: New England Patriots
+  espn_team: New England Patriots
+  odds_team: New England Patriots
+  abbr: NE
+- canonical: New Orleans Saints
+  espn_team: New Orleans Saints
+  odds_team: New Orleans Saints
+  abbr: NO
+- canonical: New York Giants
+  espn_team: New York Giants
+  odds_team: New York Giants
+  abbr: NYG
+- canonical: New York Jets
+  espn_team: New York Jets
+  odds_team: New York Jets
+  abbr: NYJ
+- canonical: Philadelphia Eagles
+  espn_team: Philadelphia Eagles
+  odds_team: Philadelphia Eagles
+  abbr: PHI
+- canonical: Pittsburgh Steelers
+  espn_team: Pittsburgh Steelers
+  odds_team: Pittsburgh Steelers
+  abbr: PIT
+- canonical: San Francisco 49ers
+  espn_team: San Francisco 49ers
+  odds_team: San Francisco 49ers
+  abbr: SF
+- canonical: Seattle Seahawks
+  espn_team: Seattle Seahawks
+  odds_team: Seattle Seahawks
+  abbr: SEA
+- canonical: Tampa Bay Buccaneers
+  espn_team: Tampa Bay Buccaneers
+  odds_team: Tampa Bay Buccaneers
+  abbr: TB
+- canonical: Tennessee Titans
+  espn_team: Tennessee Titans
+  odds_team: Tennessee Titans
+  abbr: TEN
+- canonical: Washington Commanders
+  espn_team: Washington Commanders
+  odds_team: Washington Commanders
+  abbr: WAS
