@@ -6,10 +6,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.settings import REPO_ROOT, canonicalize, load_settings
+from src.settings import REPO_ROOT, canonicalize, load_dotenv, load_settings
 from src.survivor.odds import OddsClient
 from src.survivor.optimize import optimize
-from src.survivor.payload import build_payload, load_fixture, print_table
+from src.survivor.payload import build_payload, fetch_previous, load_fixture, print_table
 from src.survivor.slate import fetch_espn_scoreboard, fetch_remaining_season, parse_espn_scoreboard
 from src.survivor.slack import format_success, post_webhook
 from src.survivor.state import apply_commit, apply_loss, load_state, save_state
@@ -59,6 +59,7 @@ def _mutate_and_exit(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    load_dotenv()
     args = _parse_args(argv)
     if args.commit or args.loss:
         return _mutate_and_exit(args)
@@ -79,6 +80,12 @@ def main(argv: list[str] | None = None) -> int:
         try:
             payload = fetch_espn_scoreboard(settings.espn_scoreboard_url)
             week, current_games, _ = parse_espn_scoreboard(payload, aliases=aliases)
+            if not week:
+                payload = fetch_espn_scoreboard(settings.espn_scoreboard_url, week=1)
+                week, current_games, _ = parse_espn_scoreboard(
+                    payload, aliases=aliases, week_fallback=1
+                )
+                week = week or 1
             if not week:
                 print("ESPN payload missing week", file=sys.stderr)
                 return 1

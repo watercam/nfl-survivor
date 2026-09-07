@@ -131,7 +131,14 @@ def parse_fixture_snapshots(rows: list[dict[str, Any]]) -> list[Snapshot]:
     return snaps
 
 
-USER_AGENT = "nfl-survivor/0.1"
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+)
+ESPN_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "application/json",
+}
 
 
 def fetch_espn_scoreboard(
@@ -146,9 +153,9 @@ def fetch_espn_scoreboard(
     if week is not None:
         params["week"] = week
     owns = client is None
-    http = client or httpx.Client(timeout=30.0, headers={"User-Agent": USER_AGENT})
+    http = client or httpx.Client(timeout=30.0, headers=ESPN_HEADERS)
     try:
-        resp = http.get(url, params=params, headers={"User-Agent": USER_AGENT})
+        resp = http.get(url, params=params, headers=ESPN_HEADERS)
         resp.raise_for_status()
         return resp.json()
     finally:
@@ -167,7 +174,7 @@ def fetch_remaining_season(
     import httpx
 
     owns = client is None
-    http = client or httpx.Client(timeout=30.0, headers={"User-Agent": USER_AGENT})
+    http = client or httpx.Client(timeout=30.0, headers=ESPN_HEADERS)
     all_games: list[Game] = []
     resolved_week = current_week
     try:

@@ -11,6 +11,7 @@ from src.survivor.probability import (
     current_snapshot_cutoff,
     no_vig_pair,
     pick_snapshot_at_or_before,
+    probability_to_american,
     reference_snapshot,
     spread_move_for_team,
 )
@@ -50,6 +51,18 @@ def _odds_for_team(
     if a is None or b is None:
         return None
     return int(a), int(b)
+
+
+def _path_step_from_side(*, week: int, side: ScoredSide) -> PathStep:
+    return PathStep(
+        week=week,
+        team=side.team,
+        p_win=side.p_final,
+        source=side.source,
+        opponent=side.opponent,
+        ml=side.ml,
+        line_source=side.line_source,
+    )
 
 
 def score_side(
@@ -121,6 +134,8 @@ def score_side(
             p_final=p_final,
             source="market",
             flags=flags,
+            ml=pair[0],
+            line_source="pinnacle",
         )
 
     # Future week: current-payload h2h only (no T-72)
@@ -143,6 +158,8 @@ def score_side(
                 p_final=p_final,
                 source="market",
                 flags=flags,
+                ml=pair[0],
+                line_source="pinnacle",
             )
     flags.append("PRIOR_NO_MARKET")
     p = settings.home_prior if is_home else (1.0 - settings.home_prior)
@@ -159,6 +176,8 @@ def score_side(
         p_final=p,
         source="prior",
         flags=flags,
+        ml=probability_to_american(p),
+        line_source="imputed",
     )
 
 
@@ -248,15 +267,7 @@ def future_path(
             flags.append("FUTURE_STARVE")
             steps.append(PathStep(week=w, team="", p_win=0.0, source="prior"))
             continue
-        steps.append(
-            PathStep(
-                week=w,
-                team=pick.team,
-                p_win=pick.p_final,
-                source=pick.source,
-                opponent=pick.opponent,
-            )
-        )
+        steps.append(_path_step_from_side(week=w, side=pick))
         used.add(pick.team)
     return steps, flags
 
@@ -335,15 +346,7 @@ def optimize(
             aliases=aliases,
             used=used | {primary.team},
         )
-        projected = [
-            PathStep(
-                week=current_week,
-                team=primary.team,
-                p_win=primary.p_final,
-                source=primary.source,
-                opponent=primary.opponent,
-            )
-        ] + rest
+        projected = [_path_step_from_side(week=current_week, side=primary)] + rest
 
     return {
         "status": "eliminated" if eliminated else "active",

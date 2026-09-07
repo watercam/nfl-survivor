@@ -27,6 +27,22 @@ def clamp(value: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, value))
 
 
+def probability_to_american(p: float, *, lo: float = 0.01, hi: float = 0.99) -> int:
+    p = clamp(float(p), lo, hi)
+    if p >= 0.5:
+        return int(round(-100.0 * p / (1.0 - p)))
+    return int(round(100.0 * (1.0 - p) / p))
+
+
+def format_american(odds: int | None) -> str:
+    if odds is None:
+        return "—"
+    n = int(odds)
+    if n > 0:
+        return f"+{n}"
+    return str(n)
+
+
 def pick_snapshot_at_or_before(
     snapshots: list[Snapshot],
     cutoff: datetime,

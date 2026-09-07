@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Literal
 
 Source = Literal["market", "prior"]
+LineSource = Literal["pinnacle", "imputed"]
 
 
 @dataclass
@@ -50,6 +51,8 @@ class ScoredSide:
     flags: list[str] = field(default_factory=list)
     survive_p: float | None = None
     locked: bool = False
+    ml: int | None = None
+    line_source: LineSource | None = None
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -66,6 +69,8 @@ class ScoredSide:
             "flags": list(self.flags),
             "game_id": self.game_id,
             "locked": self.locked,
+            "ml": self.ml,
+            "line_source": self.line_source,
         }
 
 
@@ -76,6 +81,8 @@ class PathStep:
     p_win: float
     source: Source
     opponent: str | None = None
+    ml: int | None = None
+    line_source: LineSource | None = None
 
     def to_payload(self) -> dict[str, Any]:
         return asdict(self)

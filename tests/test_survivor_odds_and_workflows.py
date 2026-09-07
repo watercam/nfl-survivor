@@ -1,6 +1,19 @@
-from src.survivor.odds import floor_to_grid, strip_api_key
+import os
 from datetime import datetime, timezone
 from pathlib import Path
+
+from src.settings import load_dotenv
+from src.survivor.odds import floor_to_grid, strip_api_key
+
+
+def test_load_dotenv_fills_empty_only(tmp_path, monkeypatch):
+    env_file = tmp_path / ".env"
+    env_file.write_text("ODDS_API_KEY=fromfile\nKEEP=keepme\n", encoding="utf-8")
+    monkeypatch.setenv("KEEP", "already")
+    monkeypatch.delenv("ODDS_API_KEY", raising=False)
+    load_dotenv(env_file)
+    assert os.environ["ODDS_API_KEY"] == "fromfile"
+    assert os.environ["KEEP"] == "already"
 
 
 def test_strip_apikey_from_url():

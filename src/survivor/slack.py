@@ -54,6 +54,11 @@ def format_success(
         locked = payload.get("committed_this_week")
         if locked:
             lines.append(f"locked pick: {locked}")
+        summary = payload.get("executive_summary")
+        if isinstance(summary, list):
+            lines.extend(f"• {item}" for item in summary if item)
+        elif summary:
+            lines.append(str(summary))
     alts = (payload.get("alternatives") or [])[:3]
     if alts:
         bits = []

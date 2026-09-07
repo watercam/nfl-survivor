@@ -15,7 +15,7 @@ calibration:
   max_adjustment: 0.03
   matrix_csv: ""
 slate:
-  espn_scoreboard_url: https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
+  espn_scoreboard_url: https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
   dashboard_url: https://nfl-survivor.netlify.app
   last_week: 18
   home_prior: 0.58

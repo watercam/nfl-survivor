@@ -4,8 +4,10 @@ from pathlib import Path
 from src.survivor.calibration import movement_adjustment
 from src.survivor.probability import (
     american_to_implied,
+    format_american,
     no_vig_pair,
     pick_snapshot_at_or_before,
+    probability_to_american,
     reference_snapshot,
 )
 from src.survivor.types import Snapshot
@@ -16,6 +18,17 @@ def test_no_vig_pair_sums_to_one():
     assert abs(a + b - 1.0) < 1e-12
     assert a > b
     assert american_to_implied(-150) > 0.5
+
+
+def test_probability_to_american():
+    assert probability_to_american(0.5) == -100
+    assert probability_to_american(2.0 / 3.0) == -200
+    assert probability_to_american(1.0 / 3.0) == 200
+    assert probability_to_american(0.0) == 9900
+    assert probability_to_american(1.0) == -9900
+    assert format_american(-355) == "-355"
+    assert format_american(130) == "+130"
+    assert format_american(None) == "—"
 
 
 def test_none_calibration_adj_zero():
