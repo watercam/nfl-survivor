@@ -4,8 +4,8 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from typing import Any, Literal
 
-Source = Literal["market", "prior"]
-LineSource = Literal["pinnacle", "imputed"]
+Source = Literal["market", "prior", "ratings"]
+LineSource = Literal["pinnacle", "imputed", "ratings"]
 
 
 @dataclass

@@ -56,6 +56,12 @@ class CalibrationSettings:
 
 
 @dataclass(frozen=True)
+class RatingsSettings:
+    enabled: bool
+    ridge: float
+
+
+@dataclass(frozen=True)
 class Settings:
     reference_hours: int
     odds_api: OddsApiSettings
@@ -64,6 +70,7 @@ class Settings:
     dashboard_url: str
     last_week: int
     home_prior: float
+    ratings: RatingsSettings
     github_repo: str
     record_pick_workflow: str
     slack_heartbeat: str
@@ -125,6 +132,10 @@ def load_settings(
         dashboard_url=str(slate.get("dashboard_url") or ""),
         last_week=int(slate["last_week"]),
         home_prior=float(slate["home_prior"]),
+        ratings=RatingsSettings(
+            enabled=bool((survivor.get("ratings") or {}).get("enabled", True)),
+            ridge=float((survivor.get("ratings") or {}).get("ridge", 2.0)),
+        ),
         github_repo=str(ops.get("github_repo") or ""),
         record_pick_workflow=str(ops.get("record_pick_workflow") or "record-pick.yml"),
         slack_heartbeat=str(slack.get("heartbeat") or "always"),

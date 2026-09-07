@@ -19,6 +19,9 @@ slate:
   dashboard_url: https://nfl-survivor.netlify.app
   last_week: 18
   home_prior: 0.58
+ratings:
+  enabled: true
+  ridge: 2.0
 ops:
   github_repo: watercam/nfl-survivor
   record_pick_workflow: record-pick.yml

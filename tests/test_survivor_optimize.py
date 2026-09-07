@@ -170,7 +170,7 @@ def test_this_week_no_ml_skipped():
     assert result["legal"] == []
 
 
-def test_prior_no_market_on_future():
+def test_future_unpriced_uses_ratings():
     settings = load_settings()
     now, week, last_week, games, snapshots = load_fixture(FIXTURE, settings.aliases)
     state = _state(last_week=last_week)
@@ -183,7 +183,8 @@ def test_prior_no_market_on_future():
         state=state,
         aliases=settings.aliases,
     )
-    future_prior = [p for p in result["projected_path"] if p.week not in {1, 15}]
-    assert future_prior
-    assert all(p.source == "prior" for p in future_prior)
-    assert any("PRIOR_NO_MARKET" in s.flags or True for s in result["alternatives"])
+    future = [p for p in result["projected_path"] if p.week not in {1, 15}]
+    assert future
+    assert all(p.source == "ratings" for p in future)
+    week15 = next(p for p in result["projected_path"] if p.week == 15)
+    assert week15.source == "market"

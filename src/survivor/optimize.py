@@ -15,6 +15,12 @@ from src.survivor.probability import (
     reference_snapshot,
     spread_move_for_team,
 )
+from src.survivor.ratings import (
+    fit_ratings,
+    home_spread,
+    predict_p,
+    spread_to_p,
+)
 from src.survivor.schedule import games_by_week
 from src.survivor.types import Game, PoolState, ScoredSide, Snapshot, PathStep
 
@@ -76,6 +82,7 @@ def score_side(
     settings: Settings,
     aliases: list[dict[str, str]],
     this_week: bool,
+    ratings: dict[str, float] | None = None,
 ) -> ScoredSide | None:
     flags = list(game.flags)
     if team is None or opponent is None:
@@ -161,6 +168,54 @@ def score_side(
                 ml=pair[0],
                 line_source="pinnacle",
             )
+        spread = home_spread(current, aliases)
+        if spread is not None:
+            p_home = spread_to_p(spread)
+            p_current = p_home if is_home else (1.0 - p_home)
+            p_final = clamp(p_current, settings.calibration.clamp_min, settings.calibration.clamp_max)
+            flags.append("SPREAD_NO_H2H")
+            return ScoredSide(
+                team=team,
+                opponent=opponent,
+                is_home=is_home,
+                week=game.week,
+                game_id=game.game_id,
+                kickoff=game.kickoff,
+                p_current=p_current,
+                spread_move=0.0,
+                adj=0.0,
+                p_final=p_final,
+                source="market",
+                flags=flags,
+                ml=probability_to_american(p_final),
+                line_source="pinnacle",
+            )
+    if ratings is not None and settings.ratings.enabled:
+        p = predict_p(
+            game.home_canonical or game.home,
+            game.away_canonical or game.away,
+            is_home=is_home,
+            ratings=ratings,
+            hfa=settings.home_prior,
+        )
+        p_final = clamp(p, settings.calibration.clamp_min, settings.calibration.clamp_max)
+        flags.append("RATINGS_PRIOR")
+        return ScoredSide(
+            team=team,
+            opponent=opponent,
+            is_home=is_home,
+            week=game.week,
+            game_id=game.game_id,
+            kickoff=game.kickoff,
+            p_current=None,
+            spread_move=0.0,
+            adj=0.0,
+            p_final=p_final,
+            source="ratings",
+            flags=flags,
+            ml=probability_to_american(p_final),
+            line_source="ratings",
+        )
     flags.append("PRIOR_NO_MARKET")
     p = settings.home_prior if is_home else (1.0 - settings.home_prior)
     return ScoredSide(
@@ -191,6 +246,7 @@ def score_week(
     this_week: bool,
     used_teams: set[str],
     drop_started: bool,
+    ratings: dict[str, float] | None = None,
 ) -> list[ScoredSide]:
     sides: list[ScoredSide] = []
     for game in games:
@@ -218,6 +274,7 @@ def score_week(
                 settings=settings,
                 aliases=aliases,
                 this_week=this_week,
+                ratings=ratings,
             )
             if scored is None:
                 continue
@@ -246,6 +303,7 @@ def future_path(
     settings: Settings,
     aliases: list[dict[str, str]],
     used: set[str],
+    ratings: dict[str, float] | None = None,
 ) -> tuple[list[PathStep], list[str]]:
     flags: list[str] = []
     steps: list[PathStep] = []
@@ -261,6 +319,7 @@ def future_path(
             this_week=False,
             used_teams=used,
             drop_started=False,
+            ratings=ratings,
         )
         pick = greedy_pick(sides)
         if pick is None:
@@ -299,6 +358,14 @@ def optimize(
     this_games = by_week.get(current_week) or []
     used = set(state.used_teams)
     eliminated = state.lives_remaining <= 0
+    ratings = None
+    if settings.ratings.enabled:
+        ratings = fit_ratings(
+            snapshots,
+            aliases,
+            hfa=settings.home_prior,
+            ridge=settings.ratings.ridge,
+        )
     legal = score_week(
         this_games,
         snapshots=snapshots,
@@ -308,6 +375,7 @@ def optimize(
         this_week=True,
         used_teams=used,
         drop_started=True,
+        ratings=ratings,
     )
     ranked: list[ScoredSide] = []
     for side in legal:
@@ -320,6 +388,7 @@ def optimize(
             settings=settings,
             aliases=aliases,
             used=used | {side.team},
+            ratings=ratings,
         )
         path = [side.p_final] + [s.p_win for s in steps]
         side.survive_p = survive_probability(path, state.lives_remaining)
@@ -345,6 +414,7 @@ def optimize(
             settings=settings,
             aliases=aliases,
             used=used | {primary.team},
+            ratings=ratings,
         )
         projected = [_path_step_from_side(week=current_week, side=primary)] + rest
 
@@ -356,4 +426,5 @@ def optimize(
         "greedy_this_week": greedy,
         "projected_path": projected,
         "legal": legal,
+        "ratings": ratings or {},
     }

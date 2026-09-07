@@ -5,6 +5,28 @@ from src.survivor.types import PathStep, PoolState, ScoredSide
 CLOSE_SURVIVE = 0.01
 
 
+def week_span_label(weeks: list[int]) -> str:
+    """Compact 'Week 3' / 'Weeks 2–4, 7' for the weeks that actually lack a price."""
+    if not weeks:
+        return ""
+    ordered = sorted(set(weeks))
+    ranges: list[tuple[int, int]] = []
+    start = prev = ordered[0]
+    for week in ordered[1:]:
+        if week == prev + 1:
+            prev = week
+            continue
+        ranges.append((start, prev))
+        start = prev = week
+    ranges.append((start, prev))
+    parts: list[str] = []
+    for first, last in ranges:
+        parts.append(f"{first}" if first == last else f"{first}–{last}")
+    if len(ranges) == 1 and ranges[0][0] == ranges[0][1]:
+        return f"Week {parts[0]}"
+    return "Weeks " + ", ".join(parts)
+
+
 def _pct(value: float | None) -> str:
     if value is None:
         return "—"
@@ -96,9 +118,7 @@ def build_executive_summary(
 
     prior_steps = [step for step in path if step.source == "prior" and step.team]
     if prior_steps:
-        first = prior_steps[0].week
-        last = prior_steps[-1].week
-        span = f"Week {first}" if first == last else f"Weeks {first}–{last}"
+        span = week_span_label([step.week for step in prior_steps])
         bullets.append(
             f"{span} have no Pinnacle price yet, so the path uses the home prior (58/42)."
         )

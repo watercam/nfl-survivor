@@ -123,7 +123,9 @@
     }
     function lineHint(row) {
       if (!row || row.ml == null) return "";
-      const src = row.line_source === "pinnacle" ? "Pinnacle" : "fair";
+      let src = "fair";
+      if (row.line_source === "pinnacle") src = "Pinnacle";
+      else if (row.line_source === "ratings") src = "ratings";
       return src + " " + american(row.ml);
     }
     fetch("./recommendations.json", { cache: "no-store" })
@@ -194,9 +196,10 @@
             <dt>survive_p / survive</dt><dd>chance you finish the season alive</dd>
             <dt>week</dt><dd>NFL week of this slate</dd>
             <dt>market</dt><dd>priced from a Pinnacle moneyline</dd>
-            <dt>prior</dt><dd>no line yet; 58% home / 42% away</dd>
+            <dt>ratings</dt><dd>no h2h yet; Massey prediction from Pinnacle games already on the board</dd>
+            <dt>prior</dt><dd>ratings off or unfit; 58% home / 42% away</dd>
           </dl>
-          <div class="stamp">generated_at ${d.generated_at || ""}</div>
+          <div class="stamp">generated_at ${d.generated_at || ""}${d.model ? ` · future ${d.model.future_market || 0} market / ${d.model.future_ratings || 0} ratings` : ""}</div>
         `;
       })
       .catch((err) => {

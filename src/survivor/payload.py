@@ -90,6 +90,16 @@ def build_payload(
     greedy_payload = None
     if greedy:
         greedy_payload = {"team": greedy.team, "p_final": greedy.p_final}
+    ratings = dict(result.get("ratings") or {})
+    ranked_ratings = sorted(ratings.items(), key=lambda item: item[1], reverse=True)
+    future_steps = list(result.get("projected_path") or [])[1:]
+    model = {
+        "top": [{"team": team, "rating": rating} for team, rating in ranked_ratings[:5]],
+        "bottom": [{"team": team, "rating": rating} for team, rating in ranked_ratings[-5:][::-1]],
+        "future_market": sum(1 for step in future_steps if step.source == "market"),
+        "future_ratings": sum(1 for step in future_steps if step.source == "ratings"),
+        "future_prior": sum(1 for step in future_steps if step.source == "prior"),
+    }
     return {
         "week": week,
         "season": state.season,
@@ -118,6 +128,7 @@ def build_payload(
         "notes": notes,
         "record_pick_url": settings.record_pick_url(),
         "executive_summary": build_executive_summary(week=week, state=state, result=result),
+        "model": model,
     }
 
 
