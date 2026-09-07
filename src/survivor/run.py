@@ -11,7 +11,7 @@ from src.survivor.odds import OddsClient
 from src.survivor.optimize import optimize
 from src.survivor.payload import build_payload, fetch_previous, load_fixture, print_table
 from src.survivor.slate import fetch_espn_scoreboard, fetch_remaining_season, parse_espn_scoreboard
-from src.survivor.slack import format_success, post_webhook
+from src.survivor.slack import post_survivor_update
 from src.survivor.state import apply_commit, apply_loss, load_state, save_state
 
 
@@ -20,6 +20,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     p.add_argument("--fixture", type=str, default="")
     p.add_argument("--web", action="store_true")
     p.add_argument("--no-slack", action="store_true")
+    p.add_argument(
+        "--slack",
+        action="store_true",
+        help="Post Slack even when using --fixture (toy slates skip Slack by default)",
+    )
     p.add_argument("--json", action="store_true")
     p.add_argument("--commit", type=str, default="")
     p.add_argument("--loss", action="store_true")
@@ -160,15 +165,23 @@ def main(argv: list[str] | None = None) -> int:
         out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {out}")
 
-    if not args.no_slack:
+    if args.no_slack:
+        pass
+    elif args.fixture and not args.slack:
+        pass
+    else:
         skip = False
         if settings.slack_heartbeat == "changes_only" and previous:
             prev_cmp = {k: v for k, v in previous.items() if k != "generated_at"}
             cur_cmp = {k: v for k, v in payload.items() if k != "generated_at"}
             skip = prev_cmp == cur_cmp
         if not skip:
-            text = format_success(payload, settings=settings, aliases=aliases)
-            post_webhook(text)
+            post_survivor_update(
+                payload,
+                previous=previous,
+                dashboard_url=settings.dashboard_url,
+                refresh_url=settings.refresh_workflow_url() or "",
+            )
 
     return 0
 

@@ -12,7 +12,6 @@ from src.settings import Settings, abbr_for
 from src.survivor.alerts import collect_alerts
 from src.survivor.optimize import optimize
 from src.survivor.slate import parse_fixture_games, parse_fixture_snapshots, parse_utc
-from src.survivor.slack import format_success, post_webhook
 from src.survivor.summary import build_executive_summary
 from src.survivor.types import PoolState, ScoredSide
 

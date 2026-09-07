@@ -27,7 +27,7 @@ def week_span_label(weeks: list[int]) -> str:
     return "Weeks " + ", ".join(parts)
 
 
-def _pct(value: float | None) -> str:
+def format_pct(value: float | None) -> str:
     if value is None:
         return "—"
     pct = 100.0 * value
@@ -36,6 +36,10 @@ def _pct(value: float | None) -> str:
     if pct >= 1:
         return f"{pct:.1f}%"
     return f"{pct:.2f}%"
+
+
+def _pct(value: float | None) -> str:
+    return format_pct(value)
 
 
 def build_executive_summary(
