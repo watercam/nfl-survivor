@@ -48,4 +48,4 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: python -m src.survivor.slack --failure "NFL Survivor refresh failed: {RUN_URL}"
+        run: python -m src.survivor.slack --failure "NFL Survivor refresh failed: ${RUN_URL}"
