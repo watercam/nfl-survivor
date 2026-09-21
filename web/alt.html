@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sleeper alt lines</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a222c;
+      --text: #f4f7fb;
+      --muted: #9aa8b5;
+      --accent: #3dd68c;
+      --bad: #ff8d8d;
+      --chip: #243140;
+      --input: #121920;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+    }
+    main { max-width: 42rem; margin: 0 auto; padding: 0.85rem 1rem 2.5rem; }
+    h1 { font-size: 0.95rem; font-weight: 650; margin: 0; }
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.25rem 0.7rem;
+      margin: 0 0 0.7rem;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+    .bar a { color: var(--accent); text-decoration: none; }
+    .lead { color: var(--muted); font-size: 0.88rem; margin: 0 0 0.85rem; }
+    .leg {
+      background: var(--card);
+      border-radius: 0.85rem;
+      padding: 0.85rem 1rem 1rem;
+      margin-bottom: 0.7rem;
+    }
+    .leg h2 { font-size: 0.8rem; margin: 0 0 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    label { display: block; font-size: 0.72rem; color: var(--muted); margin: 0.35rem 0 0.15rem; }
+    input, select {
+      width: 100%;
+      background: var(--input);
+      color: var(--text);
+      border: 1px solid #2a3846;
+      border-radius: 0.45rem;
+      padding: 0.5rem 0.55rem;
+      font-size: 1rem;
+    }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
+    .nums {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.1rem;
+      margin-top: 0.7rem;
+    }
+    .nums span { color: var(--muted); font-size: 0.72rem; display: block; }
+    .nums strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    .good { color: var(--accent); }
+    .bad { color: var(--bad); }
+    button {
+      border: 0;
+      border-radius: 0.6rem;
+      padding: 0.65rem 0.8rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .add { background: var(--chip); color: var(--text); width: 100%; margin: 0.2rem 0 0.85rem; }
+    .cta { background: var(--accent); color: #062214; width: 100%; }
+    .slip {
+      background: var(--card);
+      border-radius: 0.85rem;
+      padding: 0.85rem 1rem 1rem;
+      margin-top: 0.4rem;
+    }
+    .err { color: var(--bad); font-size: 0.82rem; margin-top: 0.4rem; }
+    .glossary { margin-top: 1.25rem; font-size: 0.8rem; color: var(--muted); }
+    .glossary dt { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .glossary dd { margin: 0 0 0.45rem; }
+    .hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="bar">
+      <h1>Sleeper alt lines</h1>
+      <a href="./index.html">Survivor</a>
+    </header>
+    <p class="lead">
+      Sleeper ALT hides the juice in the threshold <em>and</em> the multiplier.
+      Paste the sportsbook main O/U (DraftKings/FanDuel/Pinnacle) next to the Sleeper 40+ / 1.34x.
+      Edge is vs a fair multiplier of 1 / P(hit).
+    </p>
+    <div id="legs"></div>
+    <button class="add" type="button" id="add">+ another pick</button>
+    <button class="cta" type="button" id="go">Price slip</button>
+    <div id="out"></div>
+    <dl class="glossary">
+      <dt>p_sleeper</dt><dd>break-even hit rate = 1 / multiplier (1.34x needs 74.6%)</dd>
+      <dt>p_fair</dt><dd>model P(MORE) from the sportsbook main line, no-vig juice, and a residual SD (or Poisson for catches/TDs)</dd>
+      <dt>fair ×</dt><dd>1 / p_fair — what Sleeper should pay if the book is right</dd>
+      <dt>edge</dt><dd>p_fair × multiplier − 1. Positive means Sleeper is paying more than the book implies</dd>
+      <dt>book odds</dt><dd>optional. If the book posts <em>this</em> alt, skip the curve and no-vig that price instead (more accurate)</dd>
+      <dt>slip</dt><dd>product of multipliers vs product of p_fair (independence). Same-game correlation is not priced</dd>
+    </dl>
+  </main>
+  <script>
+    const STATS = {
+      rush_yds: { model: "normal", sigma: 32.0, label: "rushing yards" },
+      qb_rush_yds: { model: "normal", sigma: 18.0, label: "QB rushing yards" },
+      pass_yds: { model: "normal", sigma: 62.0, label: "passing yards" },
+      rec_yds: { model: "normal", sigma: 27.0, label: "receiving yards" },
+      rush_rec_yds: { model: "normal", sigma: 35.0, label: "rush + rec yards" },
+      receptions: { model: "poisson", sigma: 2.1, label: "receptions" },
+      rush_att: { model: "poisson", sigma: 4.5, label: "rush attempts" },
+      pass_att: { model: "normal", sigma: 6.5, label: "pass attempts" },
+      completions: { model: "normal", sigma: 5.0, label: "completions" },
+      pass_tds: { model: "poisson", sigma: 0.85, label: "passing TDs" },
+      rush_tds: { model: "poisson", sigma: 0.55, label: "rushing TDs" },
+      rec_tds: { model: "poisson", sigma: 0.45, label: "receiving TDs" },
+      rush_rec_td: { model: "poisson", sigma: 0.7, label: "rush + rec TDs" },
+      fantasy: { model: "normal", sigma: 7.5, label: "fantasy points" },
+      anytime_td: { model: "bernoulli", sigma: null, label: "anytime TD" }
+    };
+
+    function erf(x) {
+      const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+      const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+      const s = x < 0 ? -1 : 1;
+      const ax = Math.abs(x);
+      const t = 1 / (1 + p * ax);
+      const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax);
+      return s * y;
+    }
+    function phi(z) { return 0.5 * (1 + erf(z / Math.sqrt(2))); }
+    function invPhi(p) {
+      p = Math.min(Math.max(p, 1e-12), 1 - 1e-12);
+      let lo = -8, hi = 8;
+      for (let i = 0; i < 80; i++) {
+        const mid = (lo + hi) / 2;
+        if (phi(mid) < p) lo = mid; else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+    function poissonCdf(k, lam) {
+      if (k < 0) return 0;
+      let term = Math.exp(-lam), s = term;
+      for (let i = 1; i <= k; i++) {
+        term *= lam / i;
+        s += term;
+      }
+      return Math.min(1, s);
+    }
+    function poissonLambdaForOver(line, pOver) {
+      pOver = Math.min(Math.max(pOver, 1e-6), 1 - 1e-6);
+      const k = Math.floor(line);
+      const target = 1 - pOver;
+      let lo = 1e-8, hi = 400;
+      for (let i = 0; i < 90; i++) {
+        const mid = (lo + hi) / 2;
+        if (poissonCdf(k, mid) > target) lo = mid; else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+    function moreThreshold(alt) {
+      if (Math.abs(alt - Math.round(alt)) < 1e-9) return Math.round(alt);
+      return Math.floor(alt) + 1;
+    }
+    function americanImplied(o) {
+      o = Number(o);
+      if (o < 0) return Math.abs(o) / (Math.abs(o) + 100);
+      return 100 / (o + 100);
+    }
+    function noVigOver(overOdds, underOdds) {
+      const a = americanImplied(overOdds), b = americanImplied(underOdds);
+      return a / (a + b);
+    }
+    function toAmerican(p) {
+      p = Math.min(Math.max(p, 0.01), 0.99);
+      if (p >= 0.5) return Math.round(-100 * p / (1 - p));
+      return Math.round(100 * (1 - p) / p);
+    }
+    function fmtAmerican(n) { return n > 0 ? "+" + n : String(n); }
+    function pct(p) { return (100 * p).toFixed(1) + "%"; }
+    function edgeCls(ev) { return ev >= 0 ? "good" : "bad"; }
+    function edgeTxt(ev) { return (ev >= 0 ? "+" : "") + (100 * ev).toFixed(1) + "%"; }
+
+    function priceLeg(raw) {
+      const meta = STATS[raw.stat];
+      if (!meta) throw new Error("unknown stat");
+      let side = raw.side;
+      const mult = Number(raw.mult);
+      if (!(mult > 1)) throw new Error("multiplier must be > 1");
+      const pSleeper = 1 / mult;
+      let pFair, mu = null, source, flags = [];
+      const sigma = raw.sigma === "" || raw.sigma == null ? meta.sigma : Number(raw.sigma);
+
+      if (raw.bookOdds !== "" && raw.bookOdds != null) {
+        const bo = Number(raw.bookOdds);
+        if (raw.bookOpp !== "" && raw.bookOpp != null) {
+          const ia = americanImplied(bo), ib = americanImplied(Number(raw.bookOpp));
+          pFair = ia / (ia + ib);
+          source = "book_devig";
+        } else {
+          pFair = americanImplied(bo);
+          source = "book_implied";
+          flags.push("BOOK_VIG_IN");
+        }
+      } else if (meta.model === "bernoulli") {
+        throw new Error("anytime TD needs sportsbook Yes odds in Book odds");
+      } else {
+        if (raw.main === "" || raw.main == null) throw new Error("enter a sportsbook main line");
+        const main = Number(raw.main);
+        const pOver = noVigOver(raw.over || -110, raw.under || -110);
+        if (meta.model === "poisson") {
+          mu = poissonLambdaForOver(main, pOver);
+          const t = moreThreshold(Number(raw.alt));
+          const pMore = 1 - poissonCdf(t - 1, mu);
+          pFair = side === "more" ? pMore : 1 - pMore;
+          source = "poisson_from_main";
+        } else {
+          mu = main - sigma * invPhi(1 - pOver);
+          const t = moreThreshold(Number(raw.alt));
+          const pMore = 1 - phi((t - 0.5 - mu) / sigma);
+          pFair = side === "more" ? pMore : 1 - pMore;
+          source = "normal_from_main";
+          flags.push("SIGMA_HEURISTIC");
+        }
+      }
+      if (meta.model === "bernoulli" && raw.bookOdds !== "") {
+        pFair = side === "more" ? pFair : 1 - pFair;
+      }
+      pFair = Math.min(Math.max(pFair, 1e-6), 1 - 1e-6);
+      const fairMult = 1 / pFair;
+      const ev = pFair * mult - 1;
+      return {
+        player: raw.player, stat: raw.stat, label: meta.label, alt: Number(raw.alt),
+        side, multiplier: mult, pSleeper, pFair, fairMult, ev,
+        fairAmerican: toAmerican(pFair), mu, sigma, source, flags, model: meta.model
+      };
+    }
+
+    let n = 0;
+    function addLeg(preset) {
+      n += 1;
+      const id = "leg-" + n;
+      const wrap = document.createElement("section");
+      wrap.className = "leg";
+      wrap.dataset.id = id;
+      const opts = Object.entries(STATS).map(([k, v]) =>
+        `<option value="${k}" ${preset && preset.stat === k ? "selected" : ""}>${v.label}</option>`
+      ).join("");
+      wrap.innerHTML = `
+        <h2>Pick ${n}</h2>
+        <label>Player (optional)</label>
+        <input data-k="player" placeholder="name" value="${(preset && preset.player) || ""}" />
+        <label>Stat</label>
+        <select data-k="stat">${opts}</select>
+        <div class="row3">
+          <div><label>Sleeper alt (40+ → 40)</label><input data-k="alt" inputmode="decimal" value="${(preset && preset.alt) || ""}" /></div>
+          <div><label>Side</label>
+            <select data-k="side">
+              <option value="more">MORE</option>
+              <option value="less">LESS</option>
+            </select>
+          </div>
+          <div><label>Multiplier</label><input data-k="mult" inputmode="decimal" placeholder="1.34" value="${(preset && preset.mult) || ""}" /></div>
+        </div>
+        <div class="row3">
+          <div><label>Book main O/U</label><input data-k="main" inputmode="decimal" placeholder="52.5" value="${(preset && preset.main) || ""}" /></div>
+          <div><label>Over juice</label><input data-k="over" inputmode="numeric" value="-110" /></div>
+          <div><label>Under juice</label><input data-k="under" inputmode="numeric" value="-110" /></div>
+        </div>
+        <div class="row">
+          <div><label>Book American at this alt</label><input data-k="bookOdds" inputmode="numeric" placeholder="skip if using main" /></div>
+          <div><label>Other side (to de-vig)</label><input data-k="bookOpp" inputmode="numeric" placeholder="optional" /></div>
+        </div>
+        <label>σ override</label>
+        <input data-k="sigma" inputmode="decimal" placeholder="default for this stat" />
+        <p class="hint">Best path: same alt on a sportsbook. Else main O/U + default σ.</p>
+      `;
+      document.getElementById("legs").appendChild(wrap);
+      if (preset && preset.stat) wrap.querySelector('[data-k="stat"]').value = preset.stat;
+    }
+
+    function readLeg(section) {
+      const get = (k) => section.querySelector(`[data-k="${k}"]`).value.trim();
+      return {
+        player: get("player"),
+        stat: get("stat"),
+        alt: get("alt"),
+        side: get("side"),
+        mult: get("mult"),
+        main: get("main"),
+        over: get("over") || -110,
+        under: get("under") || -110,
+        bookOdds: get("bookOdds"),
+        bookOpp: get("bookOpp"),
+        sigma: get("sigma")
+      };
+    }
+
+    function render() {
+      const sections = [...document.querySelectorAll(".leg")];
+      const priced = [];
+      const errors = [];
+      sections.forEach((sec, i) => {
+        try {
+          priced.push(priceLeg(readLeg(sec)));
+        } catch (e) {
+          errors.push("Pick " + (i + 1) + ": " + e.message);
+        }
+      });
+      const el = document.getElementById("out");
+      if (errors.length) {
+        el.innerHTML = errors.map((e) => `<p class="err">${e}</p>`).join("");
+        return;
+      }
+      let html = priced.map((r) => `
+        <div class="slip">
+          <div><strong>${r.player || r.label}</strong> · ${r.alt}+ ${r.side.toUpperCase()} · ${r.multiplier.toFixed(2)}x</div>
+          <div class="nums">
+            <div><span>p_fair</span><strong>${pct(r.pFair)}</strong></div>
+            <div><span>needs</span><strong>${pct(r.pSleeper)}</strong></div>
+            <div><span>fair ×</span><strong>${r.fairMult.toFixed(2)}x</strong></div>
+            <div><span>edge</span><strong class="${edgeCls(r.ev)}">${edgeTxt(r.ev)}</strong></div>
+            <div><span>fair ML</span><strong>${fmtAmerican(r.fairAmerican)}</strong></div>
+          </div>
+          <p class="hint">${r.source}${r.mu != null ? " · μ=" + r.mu.toFixed(1) : ""}${r.model === "normal" && r.sigma ? " · σ=" + r.sigma : ""}</p>
+        </div>
+      `).join("");
+      if (priced.length > 1) {
+        const payout = priced.reduce((a, r) => a * r.multiplier, 1);
+        const pAll = priced.reduce((a, r) => a * r.pFair, 1);
+        const ev = pAll * payout - 1;
+        html += `<div class="slip">
+          <div><strong>Full slip</strong> (independent legs)</div>
+          <div class="nums">
+            <div><span>payout</span><strong>${payout.toFixed(2)}x</strong></div>
+            <div><span>p(all)</span><strong>${pct(pAll)}</strong></div>
+            <div><span>fair ×</span><strong>${(1 / pAll).toFixed(2)}x</strong></div>
+            <div><span>edge</span><strong class="${edgeCls(ev)}">${edgeTxt(ev)}</strong></div>
+          </div>
+        </div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    document.getElementById("add").addEventListener("click", () => addLeg());
+    document.getElementById("go").addEventListener("click", render);
+    addLeg({ player: "Cam Skattebo", stat: "rush_yds", alt: "40", mult: "1.34", main: "52.5" });
+    addLeg({ player: "Matthew Stafford", stat: "pass_yds", alt: "200", mult: "1.26", main: "245.5" });
+  </script>
+</body>
+</html>
