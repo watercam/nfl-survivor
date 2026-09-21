@@ -260,7 +260,7 @@
       wrap.innerHTML = `
         <h2>Pick ${n}</h2>
         <label>Player (optional)</label>
-        <input data-k="player" placeholder="Cam Skattebo" value="${(preset && preset.player) || ""}" />
+        <input data-k="player" placeholder="name" value="${(preset && preset.player) || ""}" />
         <label>Stat</label>
         <select data-k="stat">${opts}</select>
         <div class="row3">
@@ -279,11 +279,11 @@
           <div><label>Under juice</label><input data-k="under" inputmode="numeric" value="-110" /></div>
         </div>
         <div class="row">
-          <div><label>Book odds at this alt (optional)</label><input data-k="bookOdds" inputmode="numeric" placeholder="-250" /></div>
-          <div><label>Other side (optional, to de-vig)</label><input data-k="bookOpp" inputmode="numeric" placeholder="+170" /></div>
+          <div><label>Book American at this alt</label><input data-k="bookOdds" inputmode="numeric" placeholder="skip if using main" /></div>
+          <div><label>Other side (to de-vig)</label><input data-k="bookOpp" inputmode="numeric" placeholder="optional" /></div>
         </div>
-        <label>σ override (blank = default)</label>
-        <input data-k="sigma" inputmode="decimal" placeholder="leave blank" />
+        <label>σ override</label>
+        <input data-k="sigma" inputmode="decimal" placeholder="default for this stat" />
         <p class="hint">Best path: same alt on a sportsbook. Else main O/U + default σ.</p>
       `;
       document.getElementById("legs").appendChild(wrap);
