@@ -64,6 +64,30 @@ Then `git add config/state.yaml` and commit on the default branch (or use Record
 | `NETLIFY_AUTH_TOKEN` | Deploy `web/` |
 | `NETLIFY_SITE_ID` | **This** site |
 
+## Sleeper alt lines
+
+Sleeper ALT (PrizePicks-style) posts a **threshold** (`40+ rushing yards`) and a **multiplier** (`1.34x`). The juice is in both, so the card is not a 50/50. Price it against a sportsbook main O/U (or the book’s American price at the same alt).
+
+Phone: dashboard → **Alt lines** (`web/alt.html`). Laptop:
+
+```bash
+# screenshot-style goblin: 40+ MORE at 1.34x vs a 52.5 rush O/U
+python -m src.sleeper.run \
+  --player "Cam Skattebo" --stat rush_yds --alt 40 --side more --mult 1.34 --main 52.5
+
+# two-leg slip
+python -m src.sleeper.run \
+  --pick 'rush_yds,40,more,1.34,52.5' \
+  --pick 'pass_yds,200,more,1.26,245.5'
+
+# skip the curve: book already has this alt
+python -m src.sleeper.run --stat rush_yds --alt 40 --side more --mult 1.34 --book-odds -250 --book-opp 170
+```
+
+`edge = p_fair × multiplier − 1`. Positive means Sleeper pays more than the book implies. Yards use a normal residual SD; receptions/TDs use Poisson. `--list-stats` prints defaults. Same-game correlation is not priced.
+
+This is **not** the survivor pick. Pinnacle h2h + DP are unchanged.
+
 ## Tests
 
 ```bash
